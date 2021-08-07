@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.ISchedulingMapper">
+
+    <resultMap id="schedulingDtoMap" type="com.moozlee.cloud_factory.dto.SchedulingDto">
+        <id column="id" property="id"/>
+        <result column="name" property="equipmentName"/>
+        <result column="start" property="start"/>
+        <result column="end" property="end"/>
+    </resultMap>
+
+    <select id="findSchedulingListByOrderId" resultMap="schedulingDtoMap">
+        SELECT
+        	s.`id`,
+        	e.`name`,
+        	s.`start`,
+        	s.`end`
+        FROM
+        	scheduling s
+        	LEFT JOIN equipment e ON e.`id` = s.`equipment_id`
+        WHERE
+        	s.has_delete = 0
+        	AND e.has_delete = 0
+        	AND s.`order_id` = #{id}
+    </select>
+
+</mapper>

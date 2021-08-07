@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IEquipmentMapper">
+    <resultMap id="equipmentDto" type="com.moozlee.cloud_factory.dto.EquipmentDto">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type_name" property="typeName"/>
+        <result column="specification" property="specification"/>
+        <result column="description" property="desc"/>
+        <result column="equipment_status" property="status"/>
+        <result column="rent_status" property="rentStatus"/>
+        <result column="factory_name" property="factoryName"/>
+    </resultMap>
+    <select id="findEquipmentListByManagerId" resultMap="equipmentDto">
+        SELECT
+        	e.`id`,
+        	e.`name`,
+        	et.`type_name`,
+        	e.`specification`,
+        	e.`description`,
+        	e.`equipment_status`,
+        	e.`rent_status`,
+        	f.`factory_name`
+        FROM
+        	equipment e
+        	LEFT JOIN equipment_type et ON e.`type_id` = et.`type_id`
+        	LEFT JOIN factory f ON e.`factory_id` = f.`id` AND f.has_delete = 0
+        WHERE
+        	e.has_delete = 0
+        	AND et.has_delete = 0
+        	AND f.manager_id = #{id}
+        	AND e.equipment_status = 2
+  </select>
+</mapper>

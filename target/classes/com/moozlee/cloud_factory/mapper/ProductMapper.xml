@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IProductMapper">
+	<resultMap id="productDtoMap" type="com.moozlee.cloud_factory.dto.ProductDto">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="specification" property="specification"/>
+		<result column="description" property="description"/>
+		<result column="typeName" property="typeName"/>
+	</resultMap>
+	<select id="findProductPageDetail" resultMap="productDtoMap">
+		SELECT
+			p.`id`,
+			p.`name`,
+			p.`specification`,
+			p.`description`,
+			pt.`name` typeName
+		FROM
+			`product` p
+			LEFT JOIN `product_type` pt ON p.type_id = pt.id
+		<where>
+			p.has_delete = 0
+			AND pt.has_delete = 0
+			<if test="product.name != null and product.name != ''">
+				AND p.`name` = #{product.name}
+			</if>
+			<if test="product.specification != null and product.specification != ''">
+				AND p.`specification` = #{product.specification}
+			</if>
+			<if test="product.description != null and product.description != ''">
+				AND p.`description` = #{product.description}
+			</if>
+			<if test="product.typeName != null and product.typeName != ''">
+				AND pt.`name` = #{product.typeName}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAll" resultMap="productDtoMap">
+        SELECT
+            p.`id`,
+			p.`name`,
+			p.`specification`,
+			p.`description`,
+			pt.`name` typeName
+        FROM
+           `product` p
+			LEFT JOIN `product_type` pt ON p.type_id = pt.id
+        WHERE
+            p.has_delete = 0
+			AND pt.has_delete = 0
+    </select>
+</mapper>

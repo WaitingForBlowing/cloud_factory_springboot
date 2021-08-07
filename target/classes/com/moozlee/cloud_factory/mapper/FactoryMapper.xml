@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IFactoryMapper">
+    <resultMap id="factoryMap" type="com.moozlee.cloud_factory.dto.FactoryDto">
+        <id column="id" property="id"/>
+        <result column="factory_name" property="name"/>
+        <result column="factory_info" property="desc"/>
+        <result column="name" property="managerName"/>
+        <result column="account" property="managerAccount"/>
+        <result column="tel" property="managerTel"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <select id="findFactoryPageDetail" resultMap="factoryMap">
+        SELECT
+	        f.`id`,
+	        f.`factory_name`,
+	        f.`factory_info`,
+	        u.`name`,
+	        u.`account`,
+	        u.`tel`,
+	        f.`status`
+        FROM
+	        `factory` f
+	        LEFT JOIN `user` u ON f.`manager_id` = u.`id`
+        <where>
+	        f.has_delete = 0
+	        AND u.has_delete = 0
+	        <if test="factory.name != null and factory.name != ''">
+                AND f.`factory_name` = #{factory.name}
+            </if>
+            <if test="factory.status != null">
+                AND f.`status` = #{factory.status}
+            </if>
+            <if test="factory.managerName != null and factory.managerName != ''">
+                AND u.`name` = #{factory.managerName}
+            </if>
+            <if test="factory.managerAccount != null and factory.managerAccount != ''">
+                AND u.`account` = #{factory.managerAccount}
+            </if>
+            <if test="factory.managerTel != null and factory.managerTel != ''">
+                AND u.`tel` = #{factory.managerTel}
+            </if>
+        </where>
+    </select>
+</mapper>

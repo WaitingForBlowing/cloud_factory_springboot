@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IOrderMapper">
+    <resultMap id="orderDtoMap" type="com.moozlee.cloud_factory.dto.OrderDto">
+        <id column="id" property="id"/>
+        <result column="product_amount" property="productAmount"/>
+        <result column="accomplish_deadline" property="accomplishDeadline"/>
+        <result column="tender_deadline" property="tenderDeadline"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="account" property="consigneeName"/>
+        <result column="factory_name" property="factoryName"/>
+        <result column="name" property="productName"/>
+        <result column="address" property="consigneeAddress"/>
+        <result column="tel" property="consigneeTel"/>
+    </resultMap>
+    <select id="findOrderPageDetail" resultMap="orderDtoMap">
+        SELECT
+	        o.`id`,
+	        o.`product_amount`,
+	        o.`accomplish_deadline`,
+	        o.`tender_deadline`,
+	        o.`order_status`,
+	        u.`account`,
+	        u.`address`,
+	        u.`tel`,
+	        f.`factory_name`,
+	        p.`name`
+        FROM
+	        `order` o
+	        LEFT JOIN `product` p ON o.`product_id` = p.`id`
+	        LEFT JOIN `user` u ON o.`consignee_id` = u.`id`
+	        LEFT JOIN `factory` f ON o.`factory_id` = f.`id` AND f.`has_delete` = 0
+        <where>
+	        o.has_delete = 0
+	        AND p.has_delete = 0
+	        AND u.has_delete = 0
+	        <if test="order.productAmount != null">
+                AND o.`product_amount` = #{order.productAmount}
+            </if>
+            <if test="order.accomplishDeadline != null and order.accomplishDeadline != ''">
+                AND o.`accomplish_deadline` = #{order.accomplishDeadline}
+            </if>
+            <if test="order.tenderDeadline != null and order.tenderDeadline != ''">
+                AND o.`tender_deadline` = #{order.tenderDeadline}
+            </if>
+            <if test="order.orderStatus != null">
+                AND o.`order_status` = #{order.orderStatus}
+            </if>
+            <if test="order.consigneeName != null and order.consigneeName != ''">
+                AND u.`account` = #{order.consigneeName}
+            </if>
+            <if test="order.factoryName != null and order.factoryName != ''">
+                AND f.`factory_name` = #{order.factoryName}
+            </if>
+            <if test="order.productName != null and order.productName != ''">
+                AND p.`name` = #{order.productName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findOrderPageDetailWithTender" resultMap="orderDtoMap">
+        SELECT
+        o.`id`,
+        o.`product_amount`,
+        o.`accomplish_deadline`,
+        o.`tender_deadline`,
+        o.`order_status`,
+        u.`account`,
+        u.`address`,
+        u.`tel`,
+        p.`name`
+        FROM
+        `order` o
+        LEFT JOIN `product` p ON o.`product_id` = p.`id`
+        LEFT JOIN `user` u ON o.`consignee_id` = u.`id`
+        <where>
+            o.has_delete = 0
+            AND p.has_delete = 0
+            AND u.has_delete = 0
+            AND o.`order_status` = 2
+            <if test="order.productAmount != null">
+                AND o.`product_amount` = #{order.productAmount}
+            </if>
+            <if test="order.accomplishDeadline != null and order.accomplishDeadline != ''">
+                AND o.`accomplish_deadline` = #{order.accomplishDeadline}
+            </if>
+            <if test="order.tenderDeadline != null and order.tenderDeadline != ''">
+                AND o.`tender_deadline` = #{order.tenderDeadline}
+            </if>
+            <if test="order.consigneeName != null and order.consigneeName != ''">
+                AND u.`account` = #{order.consigneeName}
+            </if>
+            <if test="order.productName != null and order.productName != ''">
+                AND p.`name` = #{order.productName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findWinOrderPageDetail" resultMap="orderDtoMap">
+        SELECT
+        o.`id`,
+        o.`product_amount`,
+        o.`accomplish_deadline`,
+        o.`tender_deadline`,
+        o.`order_status`,
+        u.`account`,
+        u.`address`,
+        u.`tel`,
+        f.`factory_name`,
+        p.`name`
+        FROM
+        `order` o
+        LEFT JOIN `product` p ON o.`product_id` = p.`id`
+        LEFT JOIN `user` u ON o.`consignee_id` = u.`id`
+        LEFT JOIN `factory` f ON o.`factory_id` = f.`id` AND f.`has_delete` = 0
+        <where>
+            o.has_delete = 0
+            AND p.has_delete = 0
+            AND u.has_delete = 0
+            AND o.`order_status` in (4, 5, 6, 7, 8, 9)
+            AND f.`id` = #{id}
+            <if test="order.productAmount != null">
+                AND o.`product_amount` = #{order.productAmount}
+            </if>
+            <if test="order.accomplishDeadline != null and order.accomplishDeadline != ''">
+                AND o.`accomplish_deadline` = #{order.accomplishDeadline}
+            </if>
+            <if test="order.tenderDeadline != null and order.tenderDeadline != ''">
+                AND o.`tender_deadline` = #{order.tenderDeadline}
+            </if>
+            <if test="order.productName != null and order.productName != ''">
+                AND p.`name` = #{order.productName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderById" resultType="order" parameterType="string">
+        SELECT id,product_id,product_amount,accomplish_deadline,tender_deadline,order_status,consignee_id,factory_id,created_time,updated_time,has_delete FROM `order` WHERE id=#{id}
+    </select>
+</mapper>

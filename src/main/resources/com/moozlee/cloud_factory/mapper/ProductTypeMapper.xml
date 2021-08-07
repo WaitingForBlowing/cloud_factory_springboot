@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IProductTypeMapper">
+
+    <resultMap id="typeDtoMap" type="com.moozlee.cloud_factory.dto.TypeDto">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <select id="findTypePageDetail" resultMap="typeDtoMap">
+        SELECT
+            pt.`id`,
+            pt.`name`
+        FROM
+            `product_type` pt
+        <where>
+            pt.has_delete = 0
+            <if test="type.name != null and type.name != ''">
+                AND pt.`name` = #{type.name}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAll" resultMap="typeDtoMap">
+        SELECT
+            pt.`id`,
+            pt.`name`
+        FROM
+            `product_type` pt
+        WHERE
+            pt.has_delete = 0
+    </select>
+</mapper>

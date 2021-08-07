@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.IUserMapper">
+
+	<resultMap id="userDtoMap" type="com.moozlee.cloud_factory.dto.UserDto">
+		<id column="id" property="id"/>
+		<result column="account" property="account"/>
+		<result column="username" property="name"/>
+		<result column="mail" property="mail"/>
+		<result column="tel" property="tel"/>
+		<result column="roleName" property="roleName"/>
+	</resultMap>
+
+    <select id="findRoleByUsername" resultType="role">
+    	SELECT
+			r.*
+		FROM
+			`user` u
+			LEFT JOIN `role` r ON u.role = r.id
+		WHERE
+			u.account = #{username}
+			AND u.has_delete = 0
+    </select>
+
+	<select id="findUserPageDetail" resultMap="userDtoMap">
+		SELECT
+			u.`id`,
+			u.`account`,
+			u.`name` username,
+			u.`mail`,
+			u.`tel`,
+			r.`name` roleName
+		FROM
+			`user` u
+			LEFT JOIN `role` r ON u.role = r.id
+		<where>
+			u.has_delete = 0
+			AND r.has_delete = 0
+			<if test="user.account != null and user.account != ''">
+				AND u.`account` = #{user.account}
+			</if>
+			<if test="user.name != null and user.name != ''">
+				AND u.`name` = #{user.name}
+			</if>
+			<if test="user.mail != null and user.mail != ''">
+				AND u.`mail` = #{user.mail}
+			</if>
+			<if test="user.tel != null and user.tel != ''">
+				AND u.`tel` = #{user.tel}
+			</if>
+			<if test="user.roleName != null and user.roleName != ''">
+				AND r.`name` = #{user.roleName}
+			</if>
+		</where>
+	</select>
+</mapper>

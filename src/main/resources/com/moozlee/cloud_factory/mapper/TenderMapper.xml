@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moozlee.cloud_factory.mapper.ITenderMapper">
+    <resultMap id="tenderMap" type="com.moozlee.cloud_factory.dto.TenderDto">
+        <id column="id" property="id"/>
+        <result column="factory_name" property="factoryName"/>
+        <result column="name" property="managerName"/>
+        <result column="tel" property="managerTel"/>
+        <result column="price" property="price"/>
+    </resultMap>
+    <select id="findTenderByOrderId" resultMap="tenderMap">
+        SELECT
+        	t.`id`,
+        	f.`factory_name`,
+        	u.`name`,
+        	u.`tel`,
+        	t.`price`
+        FROM
+        	`tender` t
+        	left join `user` u on t.`manager_id` = u.`id`
+        	left join `factory` f on u.`id` = f.`manager_id`
+        WHERE
+        	t.has_delete = 0
+        	AND u.has_delete = 0
+        	AND f.has_delete = 0
+        	AND t.`order_id` = #{id}
+    </select>
+</mapper>
